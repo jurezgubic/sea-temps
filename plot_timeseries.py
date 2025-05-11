@@ -38,6 +38,9 @@ def load_data() -> pd.DataFrame:
     df["station"] = df["station"].apply(normalise_station)
     df["temp"]    = pd.to_numeric(df["temp"], errors="coerce")
 
+    # Remove duplicate entries for the same station and datetime, keeping the last one
+    df.drop_duplicates(subset=['datetime', 'station'], keep='last', inplace=True)
+
     wide = df.pivot(index="datetime", columns="station", values="temp")
     wide.sort_index(inplace=True)
     return wide
