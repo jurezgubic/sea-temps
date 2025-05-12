@@ -93,9 +93,11 @@ celerybeat.pid
 *.sage.py
 
 # Environments
+.sea_temp_venv/
 .env
 .envrc
 .direnv/
+
 
 # Spyder project settings
 .spyderproject
