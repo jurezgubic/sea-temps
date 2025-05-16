@@ -129,8 +129,8 @@ cython_debug/
 # macOS
 .DS_Store
 
-# GitHub specific
-.github/
+#instruction
+copilot-instructions.md
 
 # Output files
 *.png

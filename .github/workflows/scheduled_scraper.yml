@@ -1,0 +1,45 @@
+name: Scheduled Sea Temp Scraper
+
+on:
+  schedule:
+    # This is 18:00 UTC
+    - cron: '0 18 * * *'
+  workflow_dispatch:
+
+jobs:
+  scrape_and_commit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run scraper script
+        run: python scraper.py
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          # Add sea_temps.csv. If you use the logging version of scraper.py, also add scraper.log
+          # The '|| true' part ensures the command doesn't fail if scraper.log doesn't exist yet.
+          git add sea_temps.csv scraper.log || git add sea_temps.csv
+          # Check if there are changes to commit
+          if ! git diff --staged --quiet; then
+            git commit -m "Automated daily sea temperature update"
+            git push
+          else
+            echo "No changes to commit."
+          fi
